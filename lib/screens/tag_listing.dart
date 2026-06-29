@@ -78,17 +78,21 @@ class TagListingScreen extends StatelessWidget {
     return ListTile(
       leading: FaIcon(FontAwesomeIcons.tag, color: titleColor),
       title: Text(tag),
-      onTap: () {
-        var route = MaterialPageRoute(
-          builder: (context) => FutureBuilderWithProgress(
-            future: _tagFolderView(context, tag),
-          ),
-          settings: const RouteSettings(name: TagListingScreen.routePath),
-        );
-        Navigator.push(context, route);
-      },
+      onTap: () => openTagFolderView(context, tag),
     );
   }
+}
+
+/// Pushes a filtered view of all notes carrying [tag]. Shared by the tag
+/// listing screen and by tapping an inline #tag in the note viewer.
+void openTagFolderView(BuildContext context, String tag) {
+  var route = MaterialPageRoute(
+    builder: (context) => FutureBuilderWithProgress(
+      future: _tagFolderView(context, tag),
+    ),
+    settings: const RouteSettings(name: TagListingScreen.routePath),
+  );
+  Navigator.push(context, route);
 }
 
 Future<FolderView> _tagFolderView(BuildContext context, String tag) async {

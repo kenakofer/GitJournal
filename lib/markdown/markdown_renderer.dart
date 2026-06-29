@@ -16,6 +16,7 @@ import 'package:gitjournal/l10n.dart';
 import 'package:gitjournal/logger/logger.dart';
 import 'package:gitjournal/markdown/parsers/hardwrap.dart';
 import 'package:gitjournal/markdown/parsers/html_entities_syntax.dart';
+import 'package:gitjournal/screens/tag_listing.dart';
 import 'package:gitjournal/settings/settings.dart';
 import 'package:gitjournal/utils/link_resolver.dart';
 import 'package:gitjournal/utils/utils.dart';
@@ -126,7 +127,9 @@ class MarkdownRenderer extends StatelessWidget {
       extensionSet: markdownExtensions(hardWrapEnabled: settings.hardWrap),
       builders: {
         KatexBuilder.tag: KatexBuilder(),
-        TagBuilder.tag: TagBuilder(),
+        TagBuilder.tag: TagBuilder(
+          onTagTapped: (tag) => openTagFolderView(context, tag),
+        ),
       },
     );
 
