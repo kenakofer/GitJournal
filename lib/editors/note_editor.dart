@@ -540,6 +540,26 @@ class NoteEditorState extends State<NoteEditor>
         var originalNote = widget.existingNote!;
         var modifiedNote = await repo.updateNote(originalNote, note);
         if (!mounted) return false;
+
+        // Keep filename == name: when the title changed and filenames are
+        // derived from the title, rename the file to match. (Piece B.) Links
+        // pointing at the old name are NOT rewritten yet (Piece C, deferred).
+        if (note.shouldRebuildPath) {
+          var newFileName = modifiedNote.rebuildFileName();
+          if (newFileName != modifiedNote.fileName &&
+              !io.File(p.join(modifiedNote.parent.fullFolderPath, newFileName))
+                  .existsSync()) {
+            try {
+              modifiedNote = await repo.renameNote(modifiedNote, newFileName);
+            } catch (ex, st) {
+              // A rename clash shouldn't lose the just-saved content; log and
+              // keep the note under its old name.
+              Log.e("Rename-on-title-change failed", ex: ex, stacktrace: st);
+            }
+            if (!mounted) return false;
+          }
+        }
+
         setState(() {
           _note = modifiedNote;
         });
