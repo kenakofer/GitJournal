@@ -364,6 +364,13 @@ class Note implements File {
     return _title;
   }
 
+  /// What the UI should show as the note's name: always the filename (without
+  /// extension), so there is never any doubt. Frontmatter `title:`, an H1, the
+  /// first line, or mtime are intentionally NOT consulted here — `title` (above)
+  /// remains for serialization/editing only. Keeps display unambiguous and
+  /// filename == name (Logseq-style).
+  String get displayTitle => p.basenameWithoutExtension(filePath);
+
   NoteType get type => _type;
   ISet<String> get tags => _tags;
   Map<String, dynamic> get extraProps => UnmodifiableMapView(_extraProps);

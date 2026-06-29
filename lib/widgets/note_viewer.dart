@@ -50,7 +50,7 @@ class NoteViewer extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          NoteTitleHeader(note.title ?? ""),
+          NoteTitleHeader(note.displayTitle),
           Padding(
             padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
             child: MarkdownRenderer(

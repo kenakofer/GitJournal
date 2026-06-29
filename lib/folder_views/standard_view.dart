@@ -145,20 +145,9 @@ class StandardNoteListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String title;
-    switch (headerType) {
-      case StandardViewHeader.TitleOrFileName:
-        title = note.title ?? note.fileName;
-        break;
-
-      case StandardViewHeader.FileName:
-        title = note.fileName;
-        break;
-
-      case StandardViewHeader.TitleGenerated:
-        title = note.title ?? noteSummary;
-        break;
-    }
+    // Display is always the filename (note.displayTitle) so the shown name is
+    // unambiguous; the header-type variants are collapsed accordingly.
+    String title = note.displayTitle;
 
     var textTheme = Theme.of(context).textTheme;
     Widget titleWidget = HighlightedText(
