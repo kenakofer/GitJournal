@@ -185,4 +185,13 @@ Provides a combined #structure
 
     expect(tags, {'love', 'chocolate'});
   });
+
+  test("Ignore purely numeric tags", () {
+    var body = "See #1 and #2 but keep #summer2024 and #covid19";
+
+    var p = InlineTagsProcessor(tagPrefixes: {'#'});
+    var tags = p.extractTags(body);
+
+    expect(tags, {'summer2024', 'covid19'});
+  });
 }

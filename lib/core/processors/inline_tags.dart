@@ -26,7 +26,7 @@ class InlineTagsProcessor {
         var all = tag.split(prefix);
         for (var t in all) {
           t = sanitize(t);
-          if (t.isNotEmpty) {
+          if (t.isNotEmpty && !_isNumeric(t)) {
             tags.add(t);
           }
         }
@@ -35,6 +35,10 @@ class InlineTagsProcessor {
 
     return tags;
   }
+
+  // Purely numeric tokens like #1, #2, #42 are list markers / references, not
+  // meaningful tags, so they're excluded from the tag index.
+  static bool _isNumeric(String input) => RegExp(r'^[0-9]+$').hasMatch(input);
 
   static String sanitize(String input) {
     input = input.trim();
