@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:gitjournal/app_router.dart';
 import 'package:gitjournal/core/folder/notes_folder.dart';
 import 'package:gitjournal/core/folder/notes_folder_fs.dart';
+import 'package:gitjournal/core/markdown/md_yaml_note_serializer.dart';
 import 'package:gitjournal/core/note.dart';
 import 'package:gitjournal/core/notes/note.dart';
 import 'package:gitjournal/editors/note_editor.dart';
@@ -106,7 +107,7 @@ Future<void> openNoteEditor(
   }
 }
 
-bool openNewNoteEditor(BuildContext context, String noteSpec) {
+bool openNewNoteEditor(BuildContext context, String noteSpec, {String? title}) {
   var rootFolder = context.read<NotesFolderFS>();
   var parentFolder = rootFolder;
   var folderConfig = context.read<NotesFolderConfig>();
@@ -124,6 +125,14 @@ bool openNewNoteEditor(BuildContext context, String noteSpec) {
     fileName = p.basename(noteSpec);
   }
 
+  // Prefill the title (e.g. when following a #tag/[[wikilink]] to a note that
+  // doesn't exist yet) so the new page opens with a title instead of blank.
+  // The serializer routes it to frontmatter or an H1 per the user's settings.
+  var extraProps = <String, dynamic>{};
+  if (title != null && title.isNotEmpty) {
+    extraProps[NoteSerializationSettings().titleKey] = title;
+  }
+
   var route = newNoteRoute(
     NoteEditor.newNote(
       parentFolder,
@@ -132,6 +141,7 @@ bool openNewNoteEditor(BuildContext context, String noteSpec) {
       newNoteFileName: fileName,
       existingText: "",
       existingImages: const [],
+      newNoteExtraProps: extraProps,
     ),
     AppRoute.NewNotePrefix + folderConfig.defaultEditor.toInternalString(),
   );

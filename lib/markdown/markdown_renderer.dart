@@ -94,8 +94,10 @@ class MarkdownRenderer extends StatelessWidget {
         }
 
         if (LinkResolver.isWikiLink(link)) {
-          var opened =
-              openNewNoteEditor(context, LinkResolver.stripWikiSyntax(link));
+          // Prefill the new note's title with the link/tag name so following a
+          // #tag or [[wikilink]] to a missing note opens a titled page.
+          var name = LinkResolver.stripWikiSyntax(link);
+          var opened = openNewNoteEditor(context, name, title: name);
           if (!opened) {
             showErrorMessageSnackbar(
               context,
