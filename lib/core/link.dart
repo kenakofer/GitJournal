@@ -188,3 +188,36 @@ class WikiLinkSyntax extends md.InlineSyntax {
     return true;
   }
 }
+
+/// Parse inline tags like #tag so they can be styled in the note viewer.
+/// Mirrors InlineTagsProcessor: a non-numeric, non-whitespace token after the
+/// prefix, anchored to start-of-line or whitespace. Dart RegExp rejects
+/// variable-width lookbehind, so the leading boundary is captured as group 1
+/// and re-emitted (rather than consumed) to preserve spacing.
+class InlineTagSyntax extends md.InlineSyntax {
+  static const String _pattern = r'(^|\s)#([^\s#]+)';
+
+  InlineTagSyntax() : super(_pattern);
+
+  @override
+  bool onMatch(md.InlineParser parser, Match match) {
+    var leading = match[1]!;
+    var tag = match[2]!;
+
+    // Skip purely numeric tokens (#1, #2) — list markers, not tags.
+    if (RegExp(r'^[0-9]+$').hasMatch(tag)) {
+      return false;
+    }
+
+    // Re-emit the consumed leading whitespace so spacing is preserved.
+    if (leading.isNotEmpty) {
+      parser.addNode(md.Text(leading));
+    }
+
+    var el = md.Element('gjtag', [md.Text('#$tag')]);
+    el.attributes['tag'] = tag;
+
+    parser.addNode(el);
+    return true;
+  }
+}

@@ -26,6 +26,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'builders/katex_builder.dart';
+import 'builders/tag_builder.dart';
 
 class MarkdownRenderer extends StatelessWidget {
   final Note note;
@@ -125,6 +126,7 @@ class MarkdownRenderer extends StatelessWidget {
       extensionSet: markdownExtensions(hardWrapEnabled: settings.hardWrap),
       builders: {
         KatexBuilder.tag: KatexBuilder(),
+        TagBuilder.tag: TagBuilder(),
       },
     );
 
@@ -138,6 +140,7 @@ class MarkdownRenderer extends StatelessWidget {
       HtmlEntitiesSyntax(),
       if (hardWrapEnabled) HardWrapSyntax(),
       WikiLinkSyntax(),
+      InlineTagSyntax(),
       ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes,
       KatexBuilder.inlineParser,
     ];
