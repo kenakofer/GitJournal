@@ -10,13 +10,11 @@ import 'package:gitjournal/core/folder/notes_folder_fs.dart';
 import 'package:gitjournal/core/note.dart';
 import 'package:gitjournal/core/notes/note.dart';
 import 'package:gitjournal/core/org_links_handler.dart';
-import 'package:gitjournal/core/views/inline_tags_view.dart';
 import 'package:gitjournal/core/views/note_links_view.dart';
 import 'package:gitjournal/editors/editor_scroll_view.dart';
 import 'package:gitjournal/folder_views/common.dart';
 import 'package:gitjournal/logger/logger.dart';
 import 'package:gitjournal/markdown/markdown_renderer.dart';
-import 'package:gitjournal/widgets/note_tag_references.dart';
 import 'package:gitjournal/widgets/notes_backlinks.dart';
 import 'package:org_flutter/org_flutter.dart';
 import 'package:provider/provider.dart';
@@ -67,12 +65,6 @@ class NoteViewer extends StatelessWidget {
             rootFolder: rootFolder,
             parentFolder: parentFolder,
             linksView: NoteLinksProvider.of(context),
-          ),
-          NoteTagReferencesRenderer(
-            note: note,
-            rootFolder: rootFolder,
-            parentFolder: parentFolder,
-            inlineTagsView: InlineTagsProvider.of(context),
           ),
           // _buildFooter(context),
         ],

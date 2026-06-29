@@ -189,11 +189,12 @@ class WikiLinkSyntax extends md.InlineSyntax {
   }
 }
 
-/// Parse inline tags like #tag so they can be styled in the note viewer.
-/// Mirrors InlineTagsProcessor: a non-numeric, non-whitespace token after the
-/// prefix, anchored to start-of-line or whitespace. Dart RegExp rejects
-/// variable-width lookbehind, so the leading boundary is captured as group 1
-/// and re-emitted (rather than consumed) to preserve spacing.
+/// Parse inline tags like #tag as a wiki link: #foo is sugar for [[foo]], so it
+/// renders, colors, taps, and backlinks exactly like a page link (Logseq's
+/// unified model). A non-numeric, non-whitespace token after the prefix,
+/// anchored to start-of-line or whitespace. Dart RegExp rejects variable-width
+/// lookbehind, so the leading boundary is captured as group 1 and re-emitted
+/// (rather than consumed) to preserve spacing.
 class InlineTagSyntax extends md.InlineSyntax {
   static const String _pattern = r'(^|\s)#([^\s#]+)';
 
@@ -204,7 +205,7 @@ class InlineTagSyntax extends md.InlineSyntax {
     var leading = match[1]!;
     var tag = match[2]!;
 
-    // Skip purely numeric tokens (#1, #2) — list markers, not tags.
+    // Skip purely numeric tokens (#1, #2) — list markers, not links.
     if (RegExp(r'^[0-9]+$').hasMatch(tag)) {
       return false;
     }
@@ -214,8 +215,12 @@ class InlineTagSyntax extends md.InlineSyntax {
       parser.addNode(md.Text(leading));
     }
 
-    var el = md.Element('gjtag', [md.Text('#$tag')]);
-    el.attributes['tag'] = tag;
+    // Emit the same element WikiLinkSyntax produces so #tag == [[tag]]. The
+    // display text keeps the '#tag' form; the link target is the bare tag.
+    var el = md.Element('a', [md.Text('#$tag')]);
+    el.attributes['type'] = 'wiki';
+    el.attributes['href'] = '[[$tag]]';
+    el.attributes['term'] = tag;
 
     parser.addNode(el);
     return true;
